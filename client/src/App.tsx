@@ -9,7 +9,7 @@ let client = new SpacetimeDBClient("wss://testnet.spacetimedb.com", "onUpdateBug
 const App = () => {
   client.onConnect((token, identity) => {
     console.log("Connected to SpacetimeDB");
-    client.subscribe([ "SELECT * FROM UserComp" ])
+    client.subscribe([ "SELECT * FROM UserComp", "SELECT * FROM SpawnableEntityComponent"  ])
   })
   onMount(()=>{ client.connect() })
   

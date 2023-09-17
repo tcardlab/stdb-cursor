@@ -19,10 +19,13 @@ use tables::*;
       let entity_id = SpawnableEntityComponent::insert(SpawnableEntityComponent { entity_id: 0 })
         .expect("Failed to create player spawnable entity component.")
         .entity_id;
+      // getting unique UniqueConstraintViolations, this may just be in a bad spot?
+
+      log::info!("created user with entity_id {:?}", entity_id);
 
       UserComp::insert(UserComp {
         online: true,
-        entity_id,
+        entity_id: 346576,
         identity: ctx.sender,
       })
       .expect("Failed to insert player component.");
