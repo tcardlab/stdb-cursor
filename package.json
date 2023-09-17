@@ -1,0 +1,22 @@
+{
+  "name": "cursor-stdb",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "postinstall": "cd client && npm i",
+    "publish": "spacetime publish --project-path server schemaBug",
+    "publish:C": "npm run publish -- -c",
+    "gen:STDB": "spacetime generate --lang typescript --out-dir client/src/module_bindings --project-path server",
+    "gen:Imports": "node genImports.js",
+    "gen": "npm run gen:STDB && npm run gen:Imports",
+    "start": "cd client && npx vite",
+    "dev": "cd client && npx vite",
+    "log": "spacetime logs schemaBug",
+    "sql": "spacetime sql schemaBug"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "unplugin-auto-import": "^0.16.6"
+  }
+}
