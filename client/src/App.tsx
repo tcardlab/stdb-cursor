@@ -1,27 +1,26 @@
-import type { Component } from 'solid-js';
+import { SpacetimeDBClient } from "@clockworklabs/spacetimedb-sdk"; 
+import { onMount } from 'solid-js'
 
-import logo from './logo.svg';
-import styles from './App.module.css';
+import userComp from './module_bindings/user_comp'
 
-const App: Component = () => {
+let token = localStorage.getItem('auth_token') || undefined;
+let client = new SpacetimeDBClient("wss://testnet.spacetimedb.com", "onUpdateBug", token);
+
+const App = () => {
+  client.onConnect((token, identity) => {
+    console.log("Connected to SpacetimeDB");
+    client.subscribe([ "SELECT * FROM UserComp" ])
+  })
+  onMount(()=>{ client.connect() })
+  
+  // BUG: Uncomment next line
+  // userComp.onUpdate((oldUser, user, reducerEvent) => {})
+
   return (
-    <div class={styles.App}>
-      <header class={styles.header}>
-        <img src={logo} class={styles.logo} alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          class={styles.link}
-          href="https://github.com/solidjs/solid"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn Solid
-        </a>
-      </header>
+    <div style="display: flex; align-items: center; justify-content: center; height: 100vh; color: red">
+      <h2>see console</h2>
     </div>
-  );
-};
+  )
+}
 
 export default App;

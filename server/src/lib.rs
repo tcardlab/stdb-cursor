@@ -1,34 +1,47 @@
 use spacetimedb::{spacetimedb, ReducerContext};
+pub mod tables;
+use tables::*;
 
-#[spacetimedb(table)]
-pub struct Person {
-    name: String
-}
+/***   Set users' online status   ***/
+  #[spacetimedb(connect)]
+  // Called when a client connects to the SpacetimeDB
+  pub fn identity_connected(ctx: ReducerContext) {
+    if let Some(user) = UserComp::filter_by_identity(&ctx.sender) {
+      // If this is a returning user, i.e. we already have a `User` with this `Identity`,
+      // set `online: true`, but leave `name` and `identity` unchanged.
+      UserComp::update_by_identity(&ctx.sender, UserComp { 
+        online: true,
+        ..user 
+      });
+    } else {
+      // If this is a new user, create a `User` row for the `Identity`,
+      // which is online, but hasn't set a name.
+      let entity_id = SpawnableEntityComponent::insert(SpawnableEntityComponent { entity_id: 0 })
+        .expect("Failed to create player spawnable entity component.")
+        .entity_id;
 
-#[spacetimedb(init)]
-pub fn init() {
-    // Called when the module is initially published
-}
-
-#[spacetimedb(connect)]
-pub fn identity_connected(_ctx: ReducerContext) {
-    // Called everytime a new client connects
-}
-
-#[spacetimedb(disconnect)]
-pub fn identity_disconnected(_ctx: ReducerContext) {
-    // Called everytime a client disconnects
-}
-
-#[spacetimedb(reducer)]
-pub fn add(name: String) {
-    Person::insert(Person { name });
-}
-
-#[spacetimedb(reducer)]
-pub fn say_hello() {
-    for person in Person::iter() {
-        log::info!("Hello, {}!", person.name);
+      UserComp::insert(UserComp {
+        online: true,
+        entity_id,
+        identity: ctx.sender,
+      })
+      .expect("Failed to insert player component.");
     }
-    log::info!("Hello, World!");
-}
+  }
+
+
+  #[spacetimedb(disconnect)]
+  // Called when a client disconnects from SpacetimeDB
+  pub fn identity_disconnected(ctx: ReducerContext) {
+    if let Some(user) = UserComp::filter_by_identity(&ctx.sender) {
+      UserComp::update_by_identity(&ctx.sender, UserComp { 
+        online: false,
+        ..user 
+      });
+    } else {
+      // This branch should be unreachable,
+      // as it doesn't make sense for a client to disconnect without connecting first. 
+      log::warn!("Disconnect event for unknown user with identity {:?}", ctx.sender);
+    }
+  }
+ 
