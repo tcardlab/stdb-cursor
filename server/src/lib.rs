@@ -6,17 +6,17 @@ use tables::*;
   #[spacetimedb(connect)]
   // Called when a client connects to the SpacetimeDB
   pub fn identity_connected(ctx: ReducerContext) {
-    if let Some(user) = User::filter_by_identity(&ctx.sender) {
+    if let Some(user) = UserComp::filter_by_identity(&ctx.sender) {
       // If this is a returning user, i.e. we already have a `User` with this `Identity`,
       // set `online: true`, but leave `name` and `identity` unchanged.
-      User::update_by_identity(&ctx.sender, User { 
+      UserComp::update_by_identity(&ctx.sender, UserComp { 
         online: true,
         ..user
       });
     } else {
       log::info!("Working as Expected");
-      log::info!("Created user {:?}", ctx.sender);
-      User::insert(User {
+      log::info!("Created user comp {:?}", ctx.sender);
+      UserComp::insert(UserComp {
         online: true,
         identity: ctx.sender
       })
@@ -28,8 +28,8 @@ use tables::*;
   #[spacetimedb(disconnect)]
   // Called when a client disconnects from SpacetimeDB
   pub fn identity_disconnected(ctx: ReducerContext) {
-    if let Some(user) = User::filter_by_identity(&ctx.sender) {
-      User::update_by_identity(&ctx.sender, User { 
+    if let Some(user) = UserComp::filter_by_identity(&ctx.sender) {
+      UserComp::update_by_identity(&ctx.sender, UserComp { 
         online: false,
         ..user 
       });

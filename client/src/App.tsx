@@ -1,7 +1,7 @@
 import { SpacetimeDBClient, Identity } from "@clockworklabs/spacetimedb-sdk"; 
 import { onMount } from 'solid-js'
 
-import user from './module_bindings/user'
+import user from './module_bindings/user_comp'
 
 let token = localStorage.getItem('auth_token') || undefined;
 let client = new SpacetimeDBClient("wss://testnet.spacetimedb.com", "schemaBug", token);
@@ -15,7 +15,7 @@ const App = () => {
     local_identity = identity;
     localStorage.setItem('auth_token', token);
 
-    client.subscribe([ "SELECT * FROM User" ])
+    client.subscribe([ "SELECT * FROM UserComp" ])
   })
   onMount(()=>{ client.connect() })
   
