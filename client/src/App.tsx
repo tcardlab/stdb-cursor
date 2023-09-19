@@ -2,7 +2,7 @@ let token = localStorage.getItem('auth_token') || undefined;
 let client = new SpacetimeDBClient("wss://testnet.spacetimedb.com", "TSDemo", token);
 
 const App = () => {
-  let [users, setUsers] = createStore<Record<string, UserComp>>({})
+  let [users, setUsers] = createStore<Record<string, typeof UserComp>>({})
   let onInsertUser = onInsert(UserComp)
   onInsertUser((v, e)=>{
     let ID = v.identity.toHexString()
