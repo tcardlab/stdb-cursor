@@ -1,12 +1,3 @@
-import styles from './App.module.css';
-
-import { SpacetimeDBClient, Identity } from '@clockworklabs/spacetimedb-sdk'
-import { onMount } from 'solid-js'
-import { createStore } from 'solid-js/store'
-
-import UserComp from '~/module_bindings/user_comp'
-import { onInsert } from './utils/onInsert';
-
 let token = localStorage.getItem('auth_token') || undefined;
 let client = new SpacetimeDBClient("wss://testnet.spacetimedb.com", "TSDemo", token);
 
